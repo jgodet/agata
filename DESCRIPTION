@@ -1,0 +1,10 @@
+Package: agata
+Type: Package
+Title: Tools for multiple baseline single case experimental designs in R
+Version: 0.1.0
+Author: Julien Godet
+Maintainer: JuG <julien.godet@unistra.fr>
+Description: Toos for multiple baseline single case experimental designs in R
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
