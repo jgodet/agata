@@ -1,0 +1,30 @@
+model <- "model{
+  for (i in 1:I){
+    Yhat[i,1] <- slope1[i] + (int1[i] - slope1[i] * knot[i]) Y[i,1] ~ dnorm(Yhat[i,1], tau.e[i])
+    D[i,1] <- 0
+    for (t in 2:T){
+      D[i,t] <- step(t - knot[i])
+      Yhat[i,t] <- ((1 - D[i,t]) - rho[i] * (1 - D[i,(t-1)])) * (int1[i] - slope1[i] * knot[i]) +
+        ((1 - D[i,t]) * t - rho[i] * (1 - D[i,(t-1)]) * (t-1)) * slope1[i] +
+        (D[i,t] - rho[i] * D[i,t-1]) * (int2[i] - slope2[i] * knot[i]) +
+        (D[i,t] * t - rho[i] * D[i,(t-1)] * (t-1)) * slope2[i] + rho[i] * Y[i,(t-1)]
+      Y[i,t] ~ dnorm(Yhat[i,t], tau.delta[i])
+    } 
+    
+    
+    tau.e[i] <- 1/pow(sigma.e[i],2)
+    sigma[i] <- 1/sqrt(tau.delta[i])
+    sigma.e[i] <- sigma[i]/sqrt(1 - pow(rho[i],2)) dint[i] <- int2[i] - int1[i]
+    dslope[i] <- slope2[i] - slope1[i]
+    int1[i] ~ dunif(0,ymax)
+    int2[i] ~ dunif(0,ymax) slope1[i] ~ dnorm(0,precs1[i]) slope2[i] ~ dnorm(0,precs2[i]) precs1[i] ~ dgamma(1,1) precs2[i] ~ dgamma(1,1)
+    for (t in 1:T){ 
+      p[i,t] <- 1/T
+    }
+    knot[i] ~ dcat(p[i,])
+    tau.delta[i] ~ dgamma(1,1) 
+    rho[i] ~ dbeta(1,5)
+    } 
+    
+} #data# I, T, Y, ymax
+"
